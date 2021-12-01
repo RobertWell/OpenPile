@@ -1,0 +1,4 @@
+found 13 vulnerabilities (8 moderate, 4 high, 1 critical) at node12 (HOME)
+
+found 27 vulnerabilities (16 moderate, 9 high, 2 critical) at node16 (HOME)
+
