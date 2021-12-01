@@ -1,0 +1,20 @@
+欲裝node-sass
+嘗試1. 改Npm的Catch 位置 
+找位置：npm config get cache
+改位置：npm config set cache C:\Devel\nodejs\npm-cache --global 
+
+-----------------------------------成功的log-----------------------------------------
+Downloading binary from https://github.com/sass/node-sass/releases/download/v6.0.1/win32-x64-72_binding.node
+Download complete .] - :
+Binary saved to D:\git\OpenPile\react_node_sass_template\node_modules\node-sass\vendor\win32-x64-72\binding.node
+Caching binary to C:\biore\nodejs\npm-cache\node-sass\6.0.1\win32-x64-72_binding.node
+
+> node-sass@6.0.1 postinstall D:\git\OpenPile\react_node_sass_template\node_modules\node-sass
+> node scripts/build.js
+--------------------------------------------------------------------------------------
+
+嘗試2 調低node-sass版本(至4.12) : vulnerabilities很差且依然需要Cache
+                      (至3) : 出現gyp err
+
+
+https://github.com/RobertWell
