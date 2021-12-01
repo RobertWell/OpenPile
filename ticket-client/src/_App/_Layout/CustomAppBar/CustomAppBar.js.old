@@ -1,0 +1,145 @@
+import {
+  AppBar,
+  Toolbar,
+  makeStyles,
+  Grid,
+  
+  IconButton,
+  Container,
+  useMediaQuery,
+  useTheme,
+  Typography,
+  CssBaseline
+} from "@material-ui/core";
+import MenuIcon from "@material-ui/icons/Menu";
+import React from "react";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import './CustomAppBar.scss'
+import { BarSearch } from "Components/BarSearch";
+
+const useStyle = makeStyles((theme) => {
+  return {
+    appbar: ({ elevation }) => {
+      return {
+        // width: `calc(100% - ${drawerWidth}px)`,
+
+        // marginLeft: drawerWidth,
+        color: theme.palette.third.contrastText,
+        // backgroundColor: theme.palette.third.light,
+        backgroundColor: elevation ? "transparent" : theme.palette.third.light,
+        // opacity: elevation ? 0.4 : 1,
+        transition: " all 1s ease-out",
+        "&:hover, &:focus-within": {
+          // backgroundColor: theme.palette.third.main,
+          opacity: "1",
+        },
+        // backgroundColor: "white",
+      };
+    },
+    toolbar: {
+      borderBottom: "2px solid black",
+    },
+    badge: {
+      color: theme.palette.third.contrastText,
+    },
+    middle: {
+      flexGrow: 1,
+    },
+
+    btnRoot: {
+      backgroundColor: "green",
+    },
+    btnLabel: {
+      backgroundColor: "red",
+    },
+  };
+});
+
+const CustomAppBar = ({
+  drawerWidth,
+  elevation,
+  handleDrawer,
+
+  ...others
+}) => {
+  const classes = useStyle({ drawerWidth, elevation });
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down("xs"));
+
+  const ToolBars = [
+    {
+      item: (
+        <Toolbar variant={"dense"} className={classes.toolbar}>
+          <Grid container alignItems="center">
+            <Grid item>
+              <Typography>AAAAAAAAAAAAAAAAAAAAA</Typography>
+            </Grid>
+            <Grid item className={classes.middle}></Grid>
+            {matches && !elevation ? (
+              <Grid item>
+                <IconButton
+                  onClick={() => handleDrawer()}
+                  //   classes={{ root: classes.btnRoot, label: classes.btnLabel }}
+                >
+                  <MenuIcon className={classes.badge} />
+                </IconButton>
+              </Grid>
+            ) : null}
+          </Grid>
+        </Toolbar>
+      ),
+      id: 1,
+    },
+
+    {
+      item: (
+        <Toolbar
+          // className={classes.toolbar}
+          variant={elevation ? "dense" : "regular"}
+        >
+          <Grid container alignItems="center">
+            <Grid item className={classes.middle}></Grid>
+            <Grid item>
+              {/* <InputBase
+                placeholder="Search Topics"
+                startAdornment={<SearchIcon />}
+                className={classes.searchInput}
+              /> */}
+              <BarSearch />
+            </Grid>
+            {elevation ? (
+              <Grid item>
+                <IconButton
+                  onClick={() => handleDrawer()}
+                  //   classes={{ root: classes.btnRoot, label: classes.btnLabel }}
+                >
+                  <MenuIcon className={classes.badge} />
+                </IconButton>
+              </Grid>
+            ) : null}
+          </Grid>
+        </Toolbar>
+      ),
+      id: 2,
+    },
+  ];
+
+  return (
+    <AppBar elevation={elevation} {...others} className={classes.appbar}>
+      <Container maxWidth="lg">
+        <TransitionGroup>
+          {ToolBars.map(({ item, id }) => {
+            return elevation && id===1 ? null : (
+              <CSSTransition key={id} timeout={300} in={elevation>0} unmountOnExit classNames={'list-transition'}>
+                {item}
+              </CSSTransition>
+            );
+          })}
+        </TransitionGroup>
+      </Container>
+      <CssBaseline />
+    </AppBar>
+  );
+};
+
+export default CustomAppBar;

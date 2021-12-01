@@ -1,0 +1,232 @@
+import { useMenu } from "hooks/useMenu";
+import { useRef, useState } from "react";
+import React from "react";
+import {
+  Typography,
+  makeStyles,
+  MenuItem,
+  Menu,
+  MenuList,
+  Grow,
+  Paper,
+  Popper,
+  ClickAwayListener,
+  Collapse,
+  Button,
+  Grid,
+  useTheme,
+  useMediaQuery,
+} from "@material-ui/core";
+
+const useStyles = makeStyles(() => {
+  return {
+    root: ({ open }) => ({
+      zIndex: open ? "100" : "0",
+      position: "relative",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }),
+    // ButtonDiv: {
+    //   position: "absolute",
+    //   content: "",
+    //   bottom: "0",
+    // },
+    Menu: {
+      borderRadius: "0",
+      border: "1px solid grey",
+      top: "-2px !important",
+      backgroundColor: "white",
+    },
+
+    MenuItem: {
+      ".MuiListItem-root": {
+        borderRadius: "0",
+        background: "red",
+      },
+    },
+    // ButtonDiv: ({ open }) => ({
+    //   backgroundColor: "transparent",
+    //   position: "relative",
+    //   textAlign: "center",
+    //   padding: "5px",
+    // //   width: "80px",
+    //   "&:after": {
+    //     // display: 'block',
+    //     content: "''",
+    //     border: "1px solid grey",
+    //     width: "100%",
+    //     height: "100%",
+    //     bottom: "0",
+    //     left: "0",
+    //     position: "absolute",
+    //     // margin:'5px',
+    //     // width: "200px",
+
+    //     borderTop: open ? "1px solid grey" : "1px solid white",
+    //     borderLeft: open ? "1px solid grey" : "1px solid white",
+    //     borderRight: open ? "1px solid grey" : "1px solid white",
+    //     borderBottom: "1px solid white",
+    //     //   zIndex: "102",
+    //     "&:hover": {
+    //       // boxSizing:"border-box",
+    //       // margin:'5px',
+    //       //   backgroundColor: "white",
+    //       borderTop: "1px solid grey",
+    //       borderLeft: "1px solid grey",
+    //       borderRight: "1px solid grey",
+    //       // borderBottom: "1px solid blue",
+    //     },
+    //   },
+    // }),
+
+    button: ({ open }) => ({
+      //   position: "absolute",
+      fontWeight: "300",
+      border: "1px solid transparent",
+      //   padding: "5px",
+      backgroundColor: "white",
+      borderRadius: "0",
+      transitionDuration: "0s",
+      //   borderTop: "1px solid grey",
+
+      //   "&:after": {
+      //     border: "1px solid grey",
+      //   },
+      borderTop: open ? "1px solid grey" : "1px solid white",
+      borderLeft: open ? "1px solid grey" : "1px solid white",
+      borderRight: open ? "1px solid grey" : "1px solid white",
+      borderBottom: "1px solid white",
+      //   zIndex: "102",
+      "&:hover": {
+        backgroundColor: "white",
+        borderTop: "1px solid grey",
+        borderLeft: "1px solid grey",
+        borderRight: "1px solid grey",
+        // borderBottom: "1px solid blue",
+      },
+    }),
+  };
+});
+
+export const CustomedMenu = ({
+  text,
+  options,
+  selectedIndex,
+  setSelectedIndex,
+}) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const divRef = useRef(null);
+  if (divRef.current) console.log(divRef.current.offsetWidth);
+  const theme = useTheme();
+  const matchMD = useMediaQuery(theme.breakpoints.up("md"));
+  //   console.log("-----matchMD", matchMD);
+  const classes = useStyles({ open });
+  const handleMenuItemClick = (event, index) => {
+    //   console.log('----handleMenuItemClick');
+    setSelectedIndex(index);
+    setAnchorEl(null);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClickListItem = (event) => {
+    //   console.log(divRef);
+    setAnchorEl(divRef.current);
+    // setAnchorEl(event.currentTarget);
+  };
+
+  return (
+    <div className={classes.root}>
+      {/* <Pop
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+        selectedIndex={selectedIndex}
+        handleMenuItemClick={handleMenuItemClick}
+        handleClickListItem={handleClickListItem}
+        options={options}
+      /> */}
+      <div style={{background:"red"}}>123</div>
+      div
+
+      {/* <Button
+        onMouseEnter={handleClickListItem}
+        onMouseLeave={handleClose}
+        variant="outlined"
+        ref={divRef}
+        disableRipple
+        onClick={(e) => {
+          console.log("-----onClick");
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+        className={classes.button}
+      >
+        {text}
+      </Button> */}
+      {/* </Grid> */}
+      {/* </Grid> */}
+    </div>
+  );
+};
+
+export const Pop = ({
+  anchorEl,
+  handleClose,
+  selectedIndex,
+  handleMenuItemClick,
+  options,
+  handleClickListItem,
+}) => {
+  const classes = useStyles();
+  return (
+    <Popper
+      onMouseEnter={handleClickListItem}
+      onMouseLeave={handleClose}
+      open={Boolean(anchorEl)}
+      anchorEl={anchorEl}
+      role={undefined}
+      transition
+      placement="bottom-start"
+      disablePortal
+      className={classes.Menu}
+    >
+      {({ TransitionProps, placement }) => (
+        <Collapse
+          {...TransitionProps}
+          style={{
+            transformOrigin:
+              placement === "bottom" ? "center top" : "center bottom",
+          }}
+        >
+          {/* <Paper> */}
+          <ClickAwayListener onClickAway={handleClose}>
+            <MenuList
+              autoFocusItem={Boolean(anchorEl)}
+              id="menu-list-grow"
+              onKeyDown={handleClose}
+            >
+              {options.map((option, index) => {
+                // console.log(option);
+                return (
+                  <MenuItem
+                    key={index}
+                    // disabled={index === 0}
+                    selected={index === selectedIndex}
+                    onClick={(event) => handleMenuItemClick(event, index)}
+                  >
+                    <span>{option}</span>
+                  </MenuItem>
+                );
+              })}
+            </MenuList>
+          </ClickAwayListener>
+          {/* </Paper> */}
+        </Collapse>
+      )}
+    </Popper>
+  );
+};

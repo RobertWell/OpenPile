@@ -1,0 +1,89 @@
+import React, { useState } from "react";
+import { Input, Button } from "../controls";
+import { useAppendableNestedForm, Form } from "hooks/useAppendableNestedForm";
+
+let initialValues = {
+  default: {
+    price: 12,
+    number: 15,
+  },
+  resd: {
+    price: 12,
+    number: 15,
+  },
+};
+
+const BuildForm = () => {
+  const [lazy, setLazy] = useState(true);
+  const validate = (fieldValues = values) => {
+    let temp = {};
+
+    for (let key in fieldValues) {
+      if (/^[^.]+.?(price|number)|$/.test(key)) {
+        let keys = key.split(".");
+        temp[keys[0]] = errors[keys[0]] ? errors[keys[0]] : {};
+
+        if (keys[1] === "price")
+          temp[keys[0]][keys[1]] =
+            parseFloat(fieldValues[key]) <= 0 ? "價錢需>0" : "";
+        if (keys[2] === "number")
+          temp[keys[0]][keys[1]] = parseInt(parseFloat(fieldValues[key]) < 0)
+            ? "數量至少為0"
+            : "";
+      }
+    }
+
+    setErrors({ ...errors, ...temp });
+    if (fieldValues === values)
+      console.log(
+        "----------------------Object.keys(values)",
+        Object.keys(values)
+      );
+  };
+  const { values, setValues, handleValues, errors, setErrors, resetForm } =
+    useAppendableNestedForm(initialValues, true, validate, lazy);
+  const [t, setT] = useState(0);
+  const Add = () => {
+    setValues({
+      ...values,
+      [`${t}`]: {
+        price: 12,
+        number: 15,
+      },
+    });
+    setT(t + 1);
+  };
+  return (
+    <div>
+      {Object.keys(values).map((k) => {
+        return (
+          <>
+            <Input
+              label={`${k} price`}
+              name={`${k}.price`}
+              value={values[k]["price"]}
+              type="number"
+              onChange={handleValues}
+              error={errors[k] ? errors[k]["price"] : ""}
+              fullWidth
+              autoComplete="username"
+            />
+            <Input
+              label={`${k} number`}
+              name={`${k}.number`}
+              value={values[k].number}
+              onChange={handleValues}
+              error={errors[k] ? errors[k]["number"] : ""}
+              fullWidth
+              autoComplete="username"
+              type="number"
+            />
+          </>
+        );
+      })}
+      <Button onClick={Add} text="Add" />
+    </div>
+  );
+};
+
+export { BuildForm };

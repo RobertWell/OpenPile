@@ -1,0 +1,65 @@
+// /* Base styling*/
+
+// /* Popover styling */
+
+.popover__wrapper {
+  p {
+    margin: 0;
+  }
+  position: relative;
+  // display: inline-block;
+  &:hover {
+    z-index: 101;
+  }
+  .popover__wrapper2 {
+    // position: relative;
+    // display: inline-block;
+    .popover__title {
+      // padding: '5px';
+      position: absolute;
+      z-index: 100;
+      text-align: center;
+      background-color: white;
+      padding: 5px;
+      // border: 1px solid grey;
+      border-top: 1px solid grey;
+      border-left: 1px solid grey;
+      border-right: 1px solid grey;
+      border-bottom: 1px solid grey;
+      // p {
+      //   margin: 0;
+      // }
+    }
+    a,
+    a:visited,
+    a:hover,
+    a:active {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .popover__content {
+      opacity: 0;
+      visibility: hidden;
+      position: absolute;
+      z-index: 0;
+      left: 0;
+      top: 0;
+      transform: translate(0, 31px);
+      border: 1px solid grey;
+      width: auto;
+      background-color: white;
+    }
+
+    &:hover {
+      .popover__content {
+        z-index: 10;
+        opacity: 1;
+        visibility: visible;
+      }
+      .popover__title {
+        border-bottom: 1px solid white;
+      }
+    }
+  }
+}

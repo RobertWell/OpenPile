@@ -1,0 +1,250 @@
+import React, { useEffect, useState } from "react";
+import { useAppendableNestedForm, Form } from "hooks/useAppendableNestedForm";
+
+import { deepCheck } from "Composables/deepCheck";
+import { Button, Input } from "../controls";
+import {
+  Container,
+  makeStyles,
+  Avatar,
+  Typography,
+  Grid,
+  Box,
+  ImageList,
+  ImageListItem,
+  Divider,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  "@global": {
+    a: {
+      textDecoration: "none",
+    },
+  },
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%",
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+
+  imageRoot: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    overflow: "hidden",
+    backgroundColor: theme.palette.background.paper,
+  },
+  imageList: {
+    flexWrap: "nowrap",
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: "translateZ(0)",
+  },
+
+  options: {
+    // :not(:last-child)
+    "&>*:not(:last-child)": {
+      borderBottom: "solid black 1px",
+      paddingBottom: "1px",
+      marginBottom: "5px",
+    },
+  },
+}));
+
+const defaultInitialValues = {
+  title: "",
+  options: {
+    default: {
+      price: 1,
+      thumbnail: "",
+      number: 1,
+    },
+  },
+  discount: 0,
+  fullFigures: [],
+  short_description: "",
+  long_descrition: "",
+  tags: [],
+};
+
+const BuildForm = ({ initialValues = defaultInitialValues }) => {
+  const classes = useStyles();
+  const [lazy, setLazy] = useState(true);
+  const [title, setTitle] = useState("");
+  const [discount, setDiscount] = useState(0);
+  const [options, setOptions] = useState(initialValues.options);
+
+  const valideTitle = lazy || title.length > 0 ? "" : "請輸入標題";
+  const valideDiscount = lazy || parseFloat(discount) >= 0 ? "" : "折扣需>=0";
+
+  const handleOptions = (k, tag) => (e) => {
+    setOptions({
+      ...options,
+      [k]: {
+        ...options[k],
+        [tag]: e.target.value,
+      },
+    });
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLazy(false);
+    if (!valideTitle && !valideDiscount) {
+      console.log("----------------Submit");
+      console.log(title, discount);
+    }
+  };
+
+  //   const RenderOption = ({ k, ...others }) => {
+  //     console.log("----------k", k);
+  //     // console.log(values);
+  //     return (
+  //       <Grid container {...others}>
+  //         <Grid item xs={3}>
+  //           <Typography>{k}</Typography>
+  //         </Grid>
+  //         <Grid item xs={3}>
+  //           <Input
+  //             label="縮圖"
+  //             name={`options.${k}.thumbnail`}
+  //             value={options[k]["thumbnail"]}
+  //             onChange={handleOptions(k, "thumbnail")}
+  //             // error={errors[`options.${k}.thumbnail`]}
+  //             fullWidth
+  //           />
+  //         </Grid>
+  //         {/* <Grid item xs={3}>
+  //           <Input
+  //             label="數量"
+  //             name={`options.${k}.number`}
+  //             value={values.options[k].number}
+  //             onChange={handleValues}
+  //             error={errors[`options.${k}.number`]}
+  //             fullWidth
+  //             type="number"
+  //           />
+  //         </Grid> */}
+  //         {/* <Grid item xs={3}>
+  //           <Input
+  //             label="價錢"
+  //             name={`options.${k}.price`}
+  //             value={values.options[k].price}
+  //             onChange={handleValues}
+  //             error={errors[`options.${k}.price`]}
+  //             fullWidth
+  //           />
+  //         </Grid>  */}
+  //       </Grid>
+  //     );
+  //   };
+  return (
+    <Container>
+      <Typography component="h3" variant="h5">
+        產品建構
+      </Typography>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={4}>
+          <ImageShow images={Object.values(initialValues.options)} />
+        </Grid>
+        <Grid item xs={12} md={8}>
+          <Grid container spacing={2}>
+            <Grid item xs={8}>
+              <Input
+                label="請輸入產品名"
+                name="title"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                }}
+                error={valideTitle}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <Input
+                label="折扣"
+                name="discount"
+                type="number"
+                value={discount}
+                onChange={(e) => {
+                  setDiscount(parseFloat(e.target.value));
+                }}
+                error={valideDiscount}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="subtitle1">選項:</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              {Object.keys(options).map((k) => (
+                <Grid container key={k}>
+                  <Grid item xs={3}>
+                    <Typography>{k}</Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Input
+                      label="縮圖"
+                      name={`options.${k}.thumbnail`}
+                      value={options[k]["thumbnail"]}
+                      onChange={handleOptions(k, "thumbnail")}
+                      // error={errors[`options.${k}.thumbnail`]}
+                      fullWidth
+                    />
+                  </Grid>
+                  {/* <Grid item xs={3}>
+                  <Input
+                    label="數量"
+                    name={`options.${k}.number`}
+                    value={values.options[k].number}
+                    onChange={handleValues}
+                    error={errors[`options.${k}.number`]}
+                    fullWidth
+                    type="number"
+                  />
+                </Grid> */}
+                  {/* <Grid item xs={3}>
+                  <Input
+                    label="價錢"
+                    name={`options.${k}.price`}
+                    value={values.options[k].price}
+                    onChange={handleValues}
+                    error={errors[`options.${k}.price`]}
+                    fullWidth
+                  />
+                </Grid>  */}
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+          <Button onClick={handleSubmit} text="Submit" />
+        </Grid>
+      </Grid>
+    </Container>
+  );
+};
+
+const ImageShow = ({ images }) => {
+  return (
+    <ImageList>
+      {images.map((d) => (
+        <ImageListItem key={d.thumbnail}>
+          <img src={d.thumbnail} alt={"thumbnail"} />
+        </ImageListItem>
+      ))}
+    </ImageList>
+  );
+};
+
+export { BuildForm };

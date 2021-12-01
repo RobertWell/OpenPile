@@ -1,0 +1,291 @@
+import React, { useEffect, useState } from "react";
+import { useAppendableNestedForm, Form } from "hooks/useAppendableNestedForm";
+
+import { deepCheck } from "Composables/deepCheck";
+import { Button, Input } from "../controls";
+import {
+  Container,
+  makeStyles,
+  Avatar,
+  Typography,
+  Grid,
+  Box,
+  ImageList,
+  ImageListItem,
+  Divider,
+} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  "@global": {
+    a: {
+      textDecoration: "none",
+    },
+  },
+  paper: {
+    marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: "100%",
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+
+  imageRoot: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+    overflow: "hidden",
+    backgroundColor: theme.palette.background.paper,
+  },
+  imageList: {
+    flexWrap: "nowrap",
+    // Promote the list into his own layer on Chrome. This cost memory but helps keeping high FPS.
+    transform: "translateZ(0)",
+  },
+
+  options: {
+    // :not(:last-child)
+    "&>*:not(:last-child)": {
+      borderBottom: "solid black 1px",
+      paddingBottom: "1px",
+      marginBottom: "5px",
+    },
+  },
+  //   title: {
+  //     color: theme.palette.primary.light,
+  //   },
+  //   titleBar: {
+  //     background:
+  //       'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+  //   },
+}));
+
+const defaultInitialValues = {
+  title: "",
+  options: {
+    default: {
+      price: 1,
+      thumbnail: "",
+      number: 1,
+    },
+  },
+  discount: 0,
+  fullFigures: [],
+  short_description: "",
+  long_descrition: "",
+  tags: [],
+};
+
+const BuildForm = ({ initialValues = defaultInitialValues }) => {
+  const [lazy, setLazy] = useState(true);
+  const classes = useStyles();
+  const validate = (fieldValues = values) => {
+    console.log("-----------------fieldValues", fieldValues);
+    let temp = {};
+
+    for (let key in fieldValues) {
+      if ("title" === key)
+        temp.title =
+          fieldValues.title.length > 0 && fieldValues.title.length <= 30
+            ? ""
+            : "請提供標題(長度介於1至30之間)";
+      // if ("number" in fieldValues)
+      //   temp.number = fieldValues.number > 0 ? "" : "請提供數量(>0)";
+      if ("discount" === key)
+        temp.discount =
+          parseFloat(fieldValues.discount) >= 0 ? "" : "折扣數值需>=0";
+
+      if ("options" === key) {
+        //   console.log('-------fieldValues', fieldValues);
+        if (Object.keys(fieldValues.options) === 0) {
+          temp.options = "請提供options";
+        } else {
+          for (let k in fieldValues.options) {
+            temp[`options.${k}.price`] =
+              parseFloat(fieldValues.options[k].price) <= 0 ? "價錢需>0" : "";
+
+            temp[`options.${k}.number`] = parseInt(
+              fieldValues.options[k].number < 0
+            )
+              ? "數量至少為0"
+              : "";
+          }
+        }
+      }
+
+      if (/^options.[^.]+.?(price|number|thumbnail)$/.test(key)) {
+        let keys = key.split(".");
+        console.log('----------keys', keys,fieldValues[key]);
+
+        if (keys[2] === "price")
+          temp[key] = parseFloat(fieldValues[key]) > 0 ? "" : "價錢需>0";
+        if (keys[2] === "number")
+          temp[key] = parseInt(fieldValues[key] >= 0) ? "" : "數量至少為0";
+      }
+
+      if ("fullFigures" === key) {
+        temp.fullFigures =
+          Array.isArray(fieldValues.fullFigures) &&
+          fieldValues.fullFigures.length > 0 &&
+          fieldValues.fullFigures.length < 10
+            ? ""
+            : "全圖網址必須提供至少一個!";
+      }
+      if ("short_description" === key) {
+        temp.short_description =
+          fieldValues.short_description.length <= 30
+            ? ""
+            : "short_description不可多於30字";
+      }
+      if ("long_descrition" === key) {
+        temp.long_descrition = "";
+      }
+      if ("tags" === key) {
+        temp.tags = Array.isArray(fieldValues.tags) ? "" : "tags格式不對!";
+      }
+    }
+
+    setErrors({ ...errors, ...temp });
+    console.log("----------errors2", errors);
+    if (fieldValues === values) return deepCheck(temp, "");
+  };
+  const { values, setValues, handleValues, errors, setErrors, resetForm } =
+    useAppendableNestedForm(initialValues, true, validate, lazy);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLazy(false);
+    if (validate()) {
+      console.log("------------------handleSubmit:validate");
+    }
+    console.log("------------------handleSubmit");
+    console.log(values);
+  };
+
+  const RenderOption = ({ k, ...others }) => {
+    // console.log("----------k", k);
+    // console.log(values);
+    return (
+      <Grid container {...others}>
+        <Grid item xs={3}>
+          <Typography>{k}</Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Input
+            label="縮圖"
+            name={`options.${k}.thumbnail`}
+            value={values.options[k]["thumbnail"]}
+            onChange={handleValues}
+            error={errors[`options.${k}.thumbnail`]}
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Input
+            label="數量"
+            name={`options.${k}.number`}
+            value={values.options[k].number}
+            onChange={handleValues}
+            error={errors[`options.${k}.number`]}
+            fullWidth
+            type="number"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Input
+            label="價錢"
+            name={`options.${k}.price`}
+            value={values.options[k].price}
+            onChange={handleValues}
+            error={errors[`options.${k}.price`]}
+            fullWidth
+          />
+        </Grid>
+      </Grid>
+    );
+  };
+
+  return (
+    <Container component="main">
+      <div>
+        <Typography component="h3" variant="h5">
+          產品建構
+        </Typography>
+        <Form className={classes.form} onSubmit={handleSubmit}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              <div className={classes.imageRoot}>
+                <ImageList cols={1.5} className={classes.imageList}>
+                  {Object.values(initialValues.options).map((d) => (
+                    <ImageListItem key={d.thumbnail}>
+                      <img src={d.thumbnail} alt={"thumbnail"} />
+                    </ImageListItem>
+                  ))}
+                </ImageList>
+              </div>
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <Grid container spacing={2}>
+                <Grid item xs={8}>
+                  <Input
+                    label="請輸入產品名"
+                    name="title"
+                    value={values.title}
+                    onChange={handleValues}
+                    error={errors.title}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <Input
+                    label="折扣"
+                    name="discount"
+                    value={values.discount}
+                    onChange={handleValues}
+                    error={errors.discount}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="subtitle1">選項</Typography>
+                </Grid>
+                <Grid item xs={12} className={classes.options}>
+                  {Object.keys(values.options).map((k) => (
+                    <RenderOption k={k} key={k} />
+                  ))}
+                </Grid>
+
+                <Grid item xs={12}>
+                  <Button
+                    text="Submit"
+                    type="Submit"
+                    fullWidth
+                    className={classes.submit}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Form>
+      </div>
+    </Container>
+  );
+};
+
+const parseErrorOptions = (errors, k, tag) => {
+  console.log("------------parseErrorOptions", errors, k, tag);
+  if (typeof errors.options === "string") return errors.options;
+  else if (errors.options && errors.options[k] && errors.options[k][tag])
+    return errors.options[k][tag];
+  else return "";
+};
+
+export { BuildForm };
