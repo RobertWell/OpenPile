@@ -1,0 +1,20 @@
+h2 {
+  text-align: center;
+}
+.block3 {
+  background: green;
+  display: block;
+  /*height: 120px;*/
+//   line-height: 120px;
+}
+.inner {
+    display: inline-block;
+    vertical-align: middle;
+    background: yellow;
+    // padding: 3px 5px;
+  }
+.inner3 {
+  width: 30%;
+//   line-height: normal; /* Reset line-height for the child. IMPORTANT: Must be "normal", no integer value allowed! */
+}
+

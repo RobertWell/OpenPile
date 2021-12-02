@@ -1,0 +1,107 @@
+.container {
+  position: relative;
+  width: 100%;
+
+  .spacer {
+    height: 60px;
+  }
+}
+
+.navigation {
+  position: fixed;
+  width: 300px;
+  height: 100%;
+  background: var(--white2);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  overflow-x: auto;
+  transition: width 0.5s, left 0.5s;
+
+
+
+  & > ul {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 40px;
+
+    & > li {
+      position: inherit;
+      width: 100%;
+      list-style: none;
+
+      & > a {
+        position: inherit;
+        
+        width: 100%;
+        margin: 10px 0;
+        white-space: normal;
+        display: flex;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: var(--black);
+        font-weight: 500;
+        letter-spacing: 2px;
+        opacity: 0.5;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+.main {
+  position: absolute;
+  width: calc(100% - 0px);
+  background-color: var(--white);
+  min-height: 100vh;
+  left: 0px;
+  transition: width 0.5s, left 0.5s;
+
+  .topbar {
+    transition: inherit;
+    position: fixed;
+    top: 0;
+    width: calc(100% - 0px);
+    left: 0px;
+    background: var(--white2);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    height: 60px;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100000;
+  }
+
+  &.active,
+  & .topbar.active {
+    width: calc(100% - 300px);
+    left: 300px;
+  }
+
+  .logo {
+    color: var(--black);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.4em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .toggle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
