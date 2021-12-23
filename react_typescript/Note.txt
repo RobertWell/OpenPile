@@ -1,0 +1,3 @@
+fast template (OK!)
+
+path alias: 待測

@@ -1,0 +1,2 @@
+"primeflex": "2.0.0",
+導致有些primeflex 官網上的demo無法呈現
