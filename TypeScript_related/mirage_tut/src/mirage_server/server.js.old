@@ -1,0 +1,31 @@
+import { createServer } from "miragejs";
+
+
+
+//Without Model
+
+export default function () {
+  const movies = [
+    { id: 1, name: "Inception", year: 2010 },
+    { id: 2, name: "Instellar", year: 2014 },
+    { id: 3, name: "Dunkirk", year: 2017 },
+  ];
+
+  return createServer({
+    routes() {
+      this.namespace = "api"; //appending of routest
+      // like: /api/movies here
+      this.get("/movies", () => ({
+        movies,
+      }));
+
+      this.post("/movies", (schema, request) => {
+        let attrs = JSON.parse(request.requestBody);
+        // console.log('-------attrs', attrs);
+        attrs.id = Math.floor(Math.random() * 100);
+        movies.push(attrs)
+        return { movies };
+      });
+    },
+  });
+}

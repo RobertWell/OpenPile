@@ -1,0 +1,35 @@
+import { createServer, Model } from "miragejs";
+
+export default function () {
+  return createServer({
+    models: {
+      movie: Model,
+    },
+    seeds(server) {
+      server.create("movie", { name: "Inception", year: 2010 });
+      server.create("movie", { name: "Instellar", year: 2014 });
+      server.create("movie", { name: "Dunkirk", year: 2017 });
+    },
+    routes() {
+      this.namespace = "api"; //appending of routest
+      // like: /api/movies here
+      this.get("/movies", (schema) => schema.movies.all());
+
+      this.post("/movies", (schema, request) => {
+        let attrs = JSON.parse(request.requestBody);
+        // console.log('-------attrs', attrs);
+       
+        schema.movies.create(attrs)
+        return schema.movies.all();
+      });
+
+      this.delete("/movies/:id", (schema, request) => {
+        let id = request.params.id
+        let movie = schema.movies.find(id)
+        movie.destroy()
+
+        return schema.movies.all();
+      })
+    },
+  });
+}
