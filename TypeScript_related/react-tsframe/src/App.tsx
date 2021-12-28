@@ -10,6 +10,8 @@ import { Button } from "antd";
 import logo from "./logo.svg";
 import Typography from "@material-ui/core/Typography";
 import FlexLayout from "./components/FlexLayout";
+
+import TestComponent from "./components/TestComponent";
 function App() {
   PrimeReact.ripple = true;
 
@@ -31,6 +33,7 @@ function App() {
     <div className="App">
       <Layout>
         <div>
+        <TestComponent />
           <Typography paragraph>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
