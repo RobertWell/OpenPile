@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node tut/test2.ts"
+    "start": "ts-node email/test1.ts"
   },
   "keywords": [],
   "author": "",
