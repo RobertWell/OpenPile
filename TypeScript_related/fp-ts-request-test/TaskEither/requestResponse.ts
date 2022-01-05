@@ -5,7 +5,7 @@ import axios from "axios";
 // import { Do } from "fp-ts/lib/TaskEither";
 import { Do } from "fp-ts-contrib/lib/Do";
 
-import { User } from "./types";
+import { User } from "../tut/types";
 import { pipe, flow } from "fp-ts/lib/function";
 
 // ℹ️ traditional single fetch

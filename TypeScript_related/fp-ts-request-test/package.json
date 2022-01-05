@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node email/test1.ts"
+    "start": "ts-node TaskEither/working_solution_2.ts"
   },
   "keywords": [],
   "author": "",
