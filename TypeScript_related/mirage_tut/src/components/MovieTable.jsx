@@ -18,13 +18,21 @@ const deleteMovie = async (id) => {
   } catch (e) {}
 };
 
+const getMovie = async (id) => {
+  try {
+    const res = await axios.get(`/api/movies/${id}`);
+    console.log("----------res:get", res);
+  } catch (e) {}
+};
+
 const MovieTable = () => {
   const [movies, setMovies] = useState([]);
   const [name, setName] = useState("");
   const [year, setYear] = useState("");
   useEffect(async () => {
     const data = await getMovies();
-
+    const a = await getMovie(1)
+    
     if (data.movies) setMovies(data.movies);
 
     return () => {};
@@ -40,10 +48,7 @@ const MovieTable = () => {
     }
   };
 
-
-  const fetchActors =async (id) => {
-    
-  }
+  const fetchActors = async (id) => {};
 
   return (
     <>
@@ -103,10 +108,16 @@ const MovieTable = () => {
                   >
                     delete
                   </button>
-                  <button type='button' className="btn btn-primary" data-bs-toggle='modal' data-bs-target="#exampleModal" onClick={() => {
-                    fetchActors(id)
-                  }}>
-                      Actors
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#exampleModal"
+                    onClick={() => {
+                      fetchActors(id);
+                    }}
+                  >
+                    Actors
                   </button>
                 </td>
               </tr>

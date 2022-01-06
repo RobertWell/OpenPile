@@ -1,7 +1,20 @@
-import { belongsTo, createServer, hasMany, Model } from "miragejs";
+import { belongsTo,RestSerializer, createServer, hasMany, Model } from "miragejs";
+
+
+// let ApplicationSerializer = RestSerializer.extend({
+//   root: false,
+// })
 
 export default function () {
   return createServer({
+    serializers: {
+      application: RestSerializer,
+      movie: RestSerializer.extend({
+        include: ["actors"],
+        embed:true,
+      }),
+    },
+
     models: {
       movie: Model.extend({
         actors: hasMany(),
@@ -53,6 +66,14 @@ export default function () {
         movie.destroy();
 
         return schema.movies.all();
+      });
+
+      this.get("/movies/:id", function (schema, request) {  //function是關鍵
+        let id = request.params.id;       
+        let m = schema.movies.find(id)
+        let j = this.serialize(m)
+       
+        return j.movie
       });
     },
   });
