@@ -1,0 +1,14 @@
+.blog {
+  &.m-container {
+    max-width: 72rem !important;
+    margin: auto !important;
+  }
+  &.m-container-small {
+    max-width: 60rem !important;
+    margin: auto !important;
+  }
+
+  .m-padded-lr {
+    padding:2rem 4rem;    
+  }
+}
