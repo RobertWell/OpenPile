@@ -1,11 +1,11 @@
 import logo from './logo.svg';
 import './App.css';
 import SlateEditor from './components/SlateEditor'
-
+import DraftEditor from './components/DraftEditor';
 function App() {
   return (
     <div className="App">
-      <SlateEditor />
+      <DraftEditor />
       {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>

@@ -154,11 +154,27 @@ const Comments = () => {
     <div className="ui comments">
       <form className="ui reply form">
         <div className="field">
-          <textarea></textarea>
+          <textarea name="content" placeholder="請輸入評論"></textarea>
         </div>
-        <button className="ui blue labeled submit icon button">
-          <i className="icon edit"></i> Add Reply
-        </button>
+        <div className="fields">
+          <div className="field">
+            <div className="ui left icon input">
+              <i className="user icon " />
+              <input type="text" name="nickname" placeholder="姓名" />
+            </div>
+          </div>
+          <div className="field">
+            <div className="ui left icon input">
+              <i className="mail icon" />
+              <input type="email" name="email" placeholder="信箱" />
+            </div>
+          </div>
+        </div>
+        <div className="field">
+          <button className="ui teal button">
+            <i className="icon edit"></i> 發佈
+          </button>
+        </div>
       </form>
     </div>
   )

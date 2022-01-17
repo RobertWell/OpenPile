@@ -20,7 +20,7 @@ const AppNav = () => {
             <i className="home icon" />
             首頁
           </a>
-          <a href="#" className={`item ${open ? "" : "m-mobile-hide"}`}>
+          <a href="/blog" className={`item ${open ? "" : "m-mobile-hide"}`}>
             <i className="icon idea" />
             分類
           </a>
