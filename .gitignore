@@ -104,3 +104,6 @@ dist
 .tern-port
 
 .idea/
+/JAVATut/spring-blog/backend/src/main/resources/application-dev.properties
+/JAVATut/spring-blog/backend/src/main/resources/application-prod.properties
+/JAVATut/spring-blog/backend/src/main/resources/application-prod.properties

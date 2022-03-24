@@ -1,15 +1,29 @@
 import * as t from "io-ts";
 import * as E from "fp-ts/lib/Either";
 import * as TE from "fp-ts/lib/TaskEither";
+import * as T from "fp-ts/Task";
 import { PathReporter, failure } from "io-ts/lib/PathReporter";
-import { pipe } from "fp-ts/lib/function";
+import { pipe, flow } from "fp-ts/lib/function";
 import axios from "axios";
 import * as D from "io-ts/Decoder";
 
-const ProductCodec = t.interface({
-  code: t.number,
-  description: t.string,
-});
+const ProductCodec = t.intersection([
+  t.type({
+    code: t.number,
+    description: t.string,
+  }),
+  t.partial({
+    department: t.string,
+  }),
+]);
+
+// const ProductCodec = t.interface({
+//   code: t.number,
+//   description: t.string,
+// });
+// const ProductCodec:Codec<{t:string}> = {
+//   decode:()=>t.Validation({})
+// }
 
 // const ProductCodec = t.type({
 //   price: t.number,
@@ -17,59 +31,54 @@ const ProductCodec = t.interface({
 // });
 type Product = t.TypeOf<typeof ProductCodec>;
 
-//概念是對的!
-const safeFetch = <T extends t.Props>(
-  url: string,
-  msg: string,
-  codec: t.TypeC<T>
-): TE.TaskEither<Error, E.Either<t.Errors, T>> => {
-  let getUrl: TE.TaskEither<Error, T> = TE.tryCatch(
-    () => axios.get(url).then((resp) => Promise.resolve(resp.data)),
-    () => new Error(String(msg))
+const enum ErrorType {
+  Network,
+  Parse,
+}
+
+interface AppError {
+  type: ErrorType;
+  message: string;
+}
+
+// 用t.Decoder解法完美容納了t.type 與t.intersection做出來的Decoder!!!
+
+const decodeWith = <A>(decoder: t.Decoder<unknown, A>) =>
+  flow(
+    decoder.decode,
+    E.mapLeft(
+      (errors): AppError => ({
+        type: ErrorType.Parse,
+        message: failure(errors).join("\n"),
+      })
+    ),
+    
+    TE.fromEither
   );
 
-  let checkType: (ma: any) => E.Either<t.Errors, T> = (data) => {
-    return pipe(
-      codec.decode(data),
-      E.fold(
-        (d) => E.left(d),
-        (r: T) => E.right(r) //痛點!
-      )
-    );
-  };
-  return pipe(getUrl, TE.map(checkType));
+const getFromUrl = <A>(url: string, codec: t.Decoder<unknown, A>) => {
+  let task = TE.tryCatch(
+    () => axios.get(url),
+    (e) => e as Error
+  );
+
+  return pipe(
+    task,
+    TE.map((x) => x.data),
+    // d=>d
+    TE.mapLeft(({ message }) => ({ type: ErrorType.Network, message })),
+    TE.chain(decodeWith(codec))
+    // TE.chain(decodeWith(codec))
+  );
 };
 
-let getHttpStat = safeFetch("https://httpstat.us/200", "dsadsa", ProductCodec);
-
-// getHttpStat()
-//   .then(
-//     E.fold(
-//       (error) => console.log(error),
-//       (data) => console.log(data)
-//     )
-//   )
-//   .catch((e) => {
-//     console.log('-----------TaskEither',e);
-//   });
-
-//此方式可以pipe重新排列!
-
-//拆tryEither，可當作Promise使用!
-
-let b = async () => {
-  try {
-    let a = await getHttpStat();
-    pipe(
-      a,
-      E.fold(
-        (error) => console.log(error),
-        (data) => console.log(data)
-      )
-    )
-  } catch (e) {
-    console.log(e);
+const handleErrors = (appError: AppError): T.Task<string> => {
+  switch (appError.type) {
+    case ErrorType.Network:
+      return T.of(`Network error: ${appError.message}`);
+    case ErrorType.Parse:
+      return T.of(`Parse error: ${appError.message}`);
   }
 };
 
-b()
+let a = getFromUrl("https://httpstat.us/200", ProductCodec);

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node ErrorHandling/index.ts"
+    "start": "ts-node TaskEither/test2.ts"
   },
   "keywords": [],
   "author": "",
