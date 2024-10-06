@@ -66,3 +66,13 @@ If you want to learn more about building native executables, please consult <htt
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+
+## Create db2-container for local test
+
+```shell script
+docker run -itd --name db2-container --privileged   -e LICENSE=accept   -e DB2INST1_PASSWORD=my_password   -e DBNAME=testdb   -p 50000:50000   -v /path/to/db2/data:/database   ibmcom/db2
+docker exec -it --user root db2-container bash
+su - db2inst1
+db2start
+```
