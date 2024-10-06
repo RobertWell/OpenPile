@@ -68,11 +68,30 @@ Easily start your REST Web Services
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
 
 
-## Create db2-container for local test
+# Create db2-container for local test
 
+## create:
 ```shell script
-docker run -itd --name db2-container --privileged   -e LICENSE=accept   -e DB2INST1_PASSWORD=my_password   -e DBNAME=testdb   -p 50000:50000   -v /path/to/db2/data:/database   ibmcom/db2
+docker run -itd --name db2-container --privileged   -e LICENSE=accept   -e DB2INST1_PASSWORD=my_password2   -e DBNAME=testdb2   -p 50000:50000   -v /path/to/db2/data:/database   ibmcom/db2
 docker exec -it --user root db2-container bash
 su - db2inst1
 db2start
+```
+
+
+## script for no privileges:
+
+```shell script
+docker exec -it db2-container bash
+su - db2inst1
+cd ~/sqllib/security
+chmod 4750 db2chpw
+chmod 4750 db2ckpw
+chown db2inst1:db2iadm1 db2chpw db2ckpw
+```
+if no target db:
+```shell script
+db2 create database TESTDB2
+db2 "create schema HR"
+db2 "CREATE TABLE  HR.EMPLOYEES  ( id INT PRIMARY KEY NOT NULL, name VARCHAR(100) NOT NULL, age INT, department VARCHAR(50) )"
 ```

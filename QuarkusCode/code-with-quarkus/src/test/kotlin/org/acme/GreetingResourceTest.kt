@@ -11,7 +11,7 @@ import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.Test
 
 @QuarkusTest
-@QuarkusTestResource(DbTestResource::class)
+//@QuarkusTestResource(DbTestResource::class)
 class GreetingResourceTest {
 
     @Inject
@@ -27,7 +27,7 @@ class GreetingResourceTest {
                     println("Test Image Connected")
 
                     val employees: List<Employee> = handle
-                        .createQuery("SELECT id, name, age, department FROM HR.EMPLOYEES ")
+                        .createQuery("SELECT id, name, age, department FROM HR.EMPLOYEES; ")
                         .mapTo(Employee::class.java) // Map the result to the Employee class
                         .list()
 
