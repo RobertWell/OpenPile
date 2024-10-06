@@ -21,13 +21,17 @@ class GreetingResourceTest {
     @Test
     fun testHelloEndpoint() {
 
-
-
-
         var db2Jdbi = Jdbi.create(db2DataSource).installPlugins()
             .useHandle<Exception> { handle ->
                 run {
                     println("Test Image Connected")
+
+                    val employees: List<Employee> = handle
+                        .createQuery("SELECT id, name, age, department FROM HR.EMPLOYEES ")
+                        .mapTo(Employee::class.java) // Map the result to the Employee class
+                        .list()
+
+                    println(employees)
                 }
 
             }
