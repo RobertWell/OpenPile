@@ -2,9 +2,7 @@ package org.acme
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager
 import org.testcontainers.containers.Db2Container
-import java.sql.Connection
 import java.sql.DriverManager
-import java.sql.Statement
 
 
 class DbTestResource : QuarkusTestResourceLifecycleManager {
@@ -13,7 +11,7 @@ class DbTestResource : QuarkusTestResourceLifecycleManager {
 
     override fun start(): MutableMap<String, String> {
         db2 = Db2Container("ibmcom/db2")
-            .withExposedPorts(50000)
+
             .acceptLicense()
 
         db2.start()
@@ -57,23 +55,23 @@ class DbTestResource : QuarkusTestResourceLifecycleManager {
             (3, 'Sam Johnson', 40, 'HR')
         """
 
-        val connection = DriverManager.getConnection(db2.jdbcUrl, db2.username, db2.password)
-        println("========connection")
-
-        val statement = connection.createStatement()
-
-        try {
-            // Execute the SQL query to create the table
-            statement.executeUpdate(createSchemaSQL)
-            println("Table 'Employee' created successfully!")
-            statement.executeUpdate(createTableSQL)
-            println("Table 'employees' created successfully!")
-            statement.executeUpdate(insertDataSQL)
-            println("Dummy data inserted into 'Employee' table!")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        DriverManager.getConnection(db2.jdbcUrl, db2.username, db2.password)
+            .use { connection ->
+                connection.createStatement()
+                    .use { stat ->
+                        try {
+                            // Execute the SQL query to create the table
+                            stat.executeUpdate(createSchemaSQL)
+                            println("Table 'Employee' created successfully!")
+                            stat.executeUpdate(createTableSQL)
+                            println("Table 'employees' created successfully!")
+                            stat.executeUpdate(insertDataSQL)
+                            println("Dummy data inserted into 'Employee' table!")
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+            }
     }
-
 
 }

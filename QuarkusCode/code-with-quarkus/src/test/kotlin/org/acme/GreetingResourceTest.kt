@@ -11,7 +11,7 @@ import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.Test
 
 @QuarkusTest
-//@QuarkusTestResource(DbTestResource::class)
+@QuarkusTestResource(DbTestResource::class)
 class GreetingResourceTest {
 
     @Inject
